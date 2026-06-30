@@ -14,6 +14,11 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "RevLifter",
+  "categories": [
+    "PERSONALIZATION",
+    "CONVERSIONS",
+    "MARKETING"
+  ],
   "brand": {
     "id": "brand_revlifter",
     "displayName": "RevLifter",
