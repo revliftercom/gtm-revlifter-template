@@ -1,9 +1,9 @@
 # RevLifter — Google Tag Manager Template
 
-A Google Tag Manager custom tag template for loading the RevLifter intent engine
-on your website. Add the tag, enter your RevLifter Site UUID, and the template
-initialises the RevLifter loader and fires the `load` command — no Custom HTML or
-manual code editing required.
+A Google Tag Manager custom tag template for deploying RevLifter on your website.
+Add the tag, enter your RevLifter Site UUID, and the template initialises the
+RevLifter loader and fires the `load` command — no Custom HTML or manual code
+editing required.
 
 ## What it does
 
@@ -25,7 +25,7 @@ set on the page.
 1. In your GTM container, go to **Templates → Tag Templates → Search Gallery**.
 2. Search for **RevLifter** and add it to your workspace.
 3. Create a new tag and select the **RevLifter** template.
-4. Enter your **RevLifter Site UUID** (available in your RevLifter dashboard).
+4. Enter your **RevLifter Site UUID** (You should have already received your [SITE_UUID] variables from us).
 5. Add a trigger — typically **All Pages** (Page View).
 6. Save, preview to confirm the tag fires and the loader request to
    `assets.revlifter.io` succeeds, then publish.
@@ -59,7 +59,7 @@ appropriate consent is granted.
 
 ## Support
 
-For help with your RevLifter account, Site UUID, or the intent engine, contact
+For help with your RevLifter account, Site UUID, or the RevLifter platform, contact
 RevLifter through your account manager or [revlifter.com](https://www.revlifter.com).
 
 ## License
