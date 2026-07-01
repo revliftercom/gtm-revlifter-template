@@ -1,5 +1,5 @@
 homepage: "https://www.revlifter.com"
 documentation: "https://github.com/revliftercom/gtm-revlifter-template/blob/main/README.md"
 versions:
-  - sha: 2aacf348f82c3b2f90b0d481bb79871c14aec90e
-    changeNotes: Initial release.
+  - sha: 7987c5edb438c2320a85121afa7e223c00087e47
+    changeNotes: Update LICENSE
