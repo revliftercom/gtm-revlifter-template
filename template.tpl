@@ -51,38 +51,35 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-const createQueue = require('createQueue');
+const createArgumentsQueue = require('createArgumentsQueue');
 const injectScript = require('injectScript');
 const setInWindow = require('setInWindow');
 const encodeUriComponent = require('encodeUriComponent');
+const getTimestampMillis = require('getTimestampMillis');
 
-// The Site UUID entered by the user in the tag's field.
 const uuid = data.siteUuid;
-
-// Guard: if no UUID is supplied, fail gracefully so GTM doesn't hang.
 if (!uuid) {
   data.gtmOnFailure();
   return;
 }
 
-// Build the loader URL. Encode the UUID to keep the injected URL well-formed.
 const url = 'https://assets.revlifter.io/' + encodeUriComponent(uuid) + '.js';
 
-// 1. Mirror: window.RevLifterObject = 'revlifter'
-//    overwrite = false so we don't clobber an existing value on repeat fires.
+// i['RevLifterObject'] = r;
 setInWindow('RevLifterObject', 'revlifter', false);
 
-// 2. Mirror: window.revlifter = function(){ (revlifter.q = revlifter.q || []).push(arguments) }
-//    createQueue creates the global queue function and returns a callable handle.
-const revlifter = createQueue('revlifter');
+// i[r] = i[r] || function(){ (i[r].q = i[r].q || []).push(arguments) }
+// createArgumentsQueue reuses an existing function/queue if one is
+// already on the page, same as the || in the snippet.
+const revlifter = createArgumentsQueue('revlifter', 'revlifter.q');
 
-// 3. Mirror: revlifter('load', uuid)
+// i[r].l = 1 * new Date();
+setInWindow('revlifter.l', getTimestampMillis(), false);
+
+// revlifter('load', uuid);
 revlifter('load', uuid);
 
-// 4. Mirror: async injection of the loader script (a.async = 1; insertBefore).
-//    The loader handles its own timing internally, so window.revlifter.l is
-//    intentionally not set (the sandbox cannot set that nested property and the
-//    loader does not require it).
+// a.async = 1; a.src = g; insertBefore — injectScript is async by default
 injectScript(url, data.gtmOnSuccess, data.gtmOnFailure, url);
 
 
@@ -204,6 +201,84 @@ ___WEB_PERMISSIONS___
                     "boolean": false
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "revlifter.q"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "revlifter.l"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
               }
             ]
           }
@@ -250,7 +325,7 @@ scenarios:
     runCode(mockData);
 
     assertApi('setInWindow').wasCalled();
-    assertApi('createQueue').wasCalled();
+    assertApi('createArgumentsQueue').wasCalled();
 - name: Fails gracefully when UUID is missing
   code: |-
     const mockData = {
@@ -295,3 +370,5 @@ submission. The template reproduces the official RevLifter on-page snippet:
 The original snippet's `window.revlifter.l = 1 * new Date()` timestamp is
 intentionally omitted: the loader manages its own timing via the command-queue
 pattern and does not read a pre-set `.l` value.
+
+
